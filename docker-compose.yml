@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_local
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - TZ=America/Monterrey
+      - GENERIC_TIMEZONE=America/Monterrey
+
+      # Como es local:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      # - WEBHOOK_URL=http://localhost:5678/
+      - WEBHOOK_URL=https://e0d1ebe66f48.ngrok-free.app
+
+      # Para evitar broncas con cookies en local
+      - N8N_SECURE_COOKIE=false
+
+    # (opcional pero recomendable: deja claro el usuario)
+    user: "1000:1000"
+
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+      - ./files:/files
