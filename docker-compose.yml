@@ -5,25 +5,37 @@ services:
     image: n8nio/n8n:latest
     container_name: n8n_local
     restart: unless-stopped
-    ports:
-      - "5678:5678"
+
+    # OJO: si lo vas a usar con Nginx Proxy Manager NO expongas el puerto
+    # quita el "5678:5678" para que solo sea accesible desde la red de Docker
+    # ports:
+    #   - "5678:5678"
+
     environment:
       - TZ=America/Monterrey
       - GENERIC_TIMEZONE=America/Monterrey
 
-      # Como es local:
-      - N8N_HOST=localhost
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      # - WEBHOOK_URL=http://localhost:5678/
-      - WEBHOOK_URL=https://e0d1ebe66f48.ngrok-free.app
+      # Datos reales del dominio
+      - N8N_HOST=n8n.agsoftweb.com.mx
+      - N8N_PORT=5678              # puerto interno donde escucha n8n
+      - N8N_PROTOCOL=https         # como lo van a ver los usuarios
 
-      # Para evitar broncas con cookies en local
-      - N8N_SECURE_COOKIE=false
+      # URL externa (sin ngrok ya)
+      - WEBHOOK_URL=https://n8n.agsoftweb.com.mx/
+      - N8N_EDITOR_BASE_URL=https://n8n.agsoftweb.com.mx/
 
-    # (opcional pero recomendable: deja claro el usuario)
+      # Ya con HTTPS real, es mejor activar secure cookie
+      - N8N_SECURE_COOKIE=true
+
     user: "1000:1000"
 
     volumes:
       - ./n8n_data:/home/node/.n8n
       - ./files:/files
+
+    networks:
+      - appnetwork
+
+networks:
+  appnetwork:
+    external: true
