@@ -5,21 +5,41 @@ services:
     image: n8nio/n8n:latest
     container_name: n8n_local
     restart: unless-stopped
+
+    # Puedes dejar expuesto 5678 para pruebas directas (curl / navegador)
+    # Si luego no lo quieres público, puedes quitar este bloque 'ports'
     ports:
-      - "5678:5678"   # déjalo así por ahora, ayuda para pruebas
+      - "5678:5678"
+
     environment:
       - TZ=America/Monterrey
       - GENERIC_TIMEZONE=America/Monterrey
+
+      # Dominio público por el que vas a entrar
       - N8N_HOST=n8n.agsoftweb.com.mx
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
+
+      # URLs externas (editor y webhooks)
       - WEBHOOK_URL=https://n8n.agsoftweb.com.mx/
       - N8N_EDITOR_BASE_URL=https://n8n.agsoftweb.com.mx/
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-    user: "1000:1000"
+
+      # Para evitar el problema de la cookie segura
+      - N8N_SECURE_COOKIE=false
+
+      # Opcionales, pero recomendados para futuro:
+      # - DB_SQLITE_POOL_SIZE=5
+      # - N8N_RUNNERS_ENABLED=true
+      # - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
+
+    # Importante: NO usamos 'user: "1000:1000"' para evitar broncas extra de permisos
+
     volumes:
+      # Config y BD de n8n
       - ./n8n_data:/home/node/.n8n
+      # Carpeta para archivos (por si los usas en workflows)
       - ./files:/files
+
     networks:
       - appnetwork
 
