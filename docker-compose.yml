@@ -27,7 +27,7 @@ services:
       # Ya con HTTPS real, es mejor activar secure cookie
       - N8N_SECURE_COOKIE=true
 
-    user: "1000:1000"
+    # user: "1000:1000"
 
     volumes:
       - ./n8n_data:/home/node/.n8n
